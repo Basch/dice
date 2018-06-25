@@ -14,22 +14,40 @@
 
 
     function print_line ($goal, $stat) {
+
+        //$dices = ;
+        $pad_dice = [];
+        foreach ( $stat['max_dices'] as $dice ){
+            $pad_dice[] = str_pad( $dice, 2, ' ', STR_PAD_LEFT );
+        }
+
+        $pad_dice = implode(' ', $pad_dice);
+
         echo $goal . "+";
-        echo " -> " . implode(' ', $stat['max_dices']) . " : " . round($stat['chance'] * 100, 2) . "% \n";
+        echo " -> " . $pad_dice . " : " . round($stat['chance'] * 100, 2) . "% \n";
     }
 
     function create_stats( &$stats, $pool, $goal ) {
         $tmp = Pool::create([ $pool['i'], $pool['j'], $pool['h'] ])->calcChancesToBeat( $goal , false, 1);
-        $stats[ str_pad( number_format (round($tmp['chance']*100, 2 ), 2) , 6, "0", STR_PAD_LEFT ) . implode('-',$pool) ] = $tmp;
+        $stats[array_sum($pool)][ str_pad( number_format (round($tmp['chance']*100, 2 ), 2) , 6, "0", STR_PAD_LEFT ) . implode('-',$pool) ] = $tmp;
     }
 
-    $goal = 11;
-
-   /* Pool::Create( [4,4] )->sayMyName()->showNumberOfSuccess($goal);
-    Pool::Create( [4,6] )->sayMyName()->showNumberOfSuccess($goal);
-
-    $p = Pool::Create( [4, '6', ['4', 12]] )->sayMyName()->showNumberOfSuccess($goal);*/
-   // Pool::create([ 8,8,6 ])->sayMyName()->printBaseStat()->showChancesToBeat( 11 , false, 1);
+    function stats( $pools , $goal ) {
+        echo '<div style="float:left; margin-right: 20px;">';
+        $stats = [];
+        foreach( $pools as $pool ) {
+            create_stats($stats, $pool, $goal );
+        }
+        ksort( $stats );
+        foreach($stats as $stat) {
+            //ksort( $stat );
+            foreach($stat as $data) {
+                print_line($goal, $data);
+            }
+            echo"\n";
+        }
+        echo"</div>";
+    }
 
     $pools = [];
     for( $i = 4; $i < 14; $i = $i + 2 )
@@ -51,56 +69,16 @@
             'h' => $h,
             ];
     }
-
-
-    echo '<div style="float:left; margin-right: 10px;">';
     ksort($pools);
-    $stats = [];
-    foreach( $pools as $pool ) {
-        create_stats($stats, $pool, $goal );
-    }
-    ksort( $stats );
-    foreach($stats as $stat) {
-        print_line($goal, $stats);
-    }
-    echo"</div>";
 
-    $goal = 12;
-
-    echo '<div style="float:left">';
-    ksort($pools);
-    $stats = [];
-    foreach( $pools as $pool ) {
-        create_stats($stats, $pool, $goal );
-    }
-    ksort( $stats );
-    foreach($stats as $stat) {
-        print_line($goal, $stats);
-    }
-    echo"</div>";
-
-    $goal = 13;
-
-    echo '<div style="float:left">';
-    ksort($pools);
-    $stats = [];
-    foreach( $pools as $pool ) {
-        create_stats($stats, $pool, $goal );
-    }
-    ksort( $stats );
-    foreach($stats as $stat) {
-        print_line($goal, $stats);
-    }
-    echo"</div>";
+    stats( $pools , 11 );
+    stats( $pools , 12 );
+    stats( $pools , 13 );
+    stats( $pools , 14 );
+    stats( $pools , 15 );
+    stats( $pools , 16 );
 
 
 
 
-  /* $p = Pool::Create([4,12,6]);
-    $p->sayMyName();
-   echo "max : " . $p->getBiggestDice() . "\n min : ". $p->getSmallesttDice() . "\n";*/
-
-
-
-
-    ?></pre>
+?></pre>
